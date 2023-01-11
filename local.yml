@@ -80,24 +80,17 @@
       tags:
         - nodejs
 
-    - name: nvim - install plugins
-      become: no
-      command:
-        cmd: nvim --headless +pluginstall +qall
-        creates: "{{ home_dir }}/.local/share/nvim"
-      tags:
-        - nvim
-
-    - name: ssh - generate key
-      openssh_keypair:
-        path: "{{ home_dir }}/.ssh/id_rsa"
-      tags:
-        - ssh
+          # - name: ssh - generate key
+          #   openssh_keypair:
+          #     path: "{{ home_dir }}/.ssh/id_rsa"
+          #   tags:
+          #     - ssh
 
     - name: dotfiles - clone repo
       ansible.builtin.git:
         repo: git@github.com:FilipHarald/dotfiles.git
         dest: "{{ home_dir }}/dotfiles"
+        accept_hostkey: true
       tags:
         - dotfiles
 
@@ -120,3 +113,11 @@
         - nvim
       tags:
         - dotfiles
+
+    - name: nvim - install plugins
+      become: no
+      command:
+        cmd: nvim --headless +pluginstall +qall
+        creates: "{{ home_dir }}/.local/share/nvim"
+      tags:
+        - nvim
