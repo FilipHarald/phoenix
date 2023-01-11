@@ -20,17 +20,21 @@
         - "{{ username }}"
 
   tasks:
+    - name: general - add nvim unstable repo
+      become_user: root
+      apt_repository: repo="ppa:neovim-ppa/unstable"
+
     - name: general - install packages
       become_user: root
       apt: name={{item}}
       with_items:
-        - neovim
         - i3
         - stow
         - fzf
         - ripgrep
         - bat
         - curl
+        - neovim
 
     # https://waylonwalker.com/install-rust/
     - name: rust - check if cargo is installed
@@ -80,12 +84,6 @@
       tags:
         - nodejs
 
-          # - name: ssh - generate key
-          #   openssh_keypair:
-          #     path: "{{ home_dir }}/.ssh/id_rsa"
-          #   tags:
-          #     - ssh
-
     - name: dotfiles - clone repo
       ansible.builtin.git:
         repo: https://github.com/FilipHarald/dotfiles.git
@@ -101,22 +99,10 @@
         - dotfiles
 
     - name: dotfiles - run stow
-      ansible.builtin.shell: >
-        stow {{ item }}
-      args:
-        executable: /bin/bash
+      ansible.builtin.shell:
+        cmd: stow -v */
         chdir: "{{ home_dir }}/dotfiles"
-      loop:
-        - bash
-        - i3
-        - nvim
+      register: stow_result
+      changed_when: stow_result.stdout != ""
       tags:
         - dotfiles
-
-    - name: nvim - install plugins
-      become: no
-      command:
-        cmd: nvim --headless +'PlugInstall' +qall
-        creates: "{{ home_dir }}/.local/share/nvim"
-      tags:
-        - nvim
