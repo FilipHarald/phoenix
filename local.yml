@@ -67,8 +67,9 @@
         - nodejs
 
     - name: nodejs - install node
+      become: no
       ansible.builtin.shell: >
-        {{ home_dir }}/.nvm/nvm.sh && nvm install {{ item }} && nvm use {{ item }}
+        . {{ home_dir }}/.nvm/nvm.sh && nvm install {{ item }} && nvm use {{ item }}
       args:
         executable: /bin/bash
         chdir: "{{ home_dir }}"
@@ -80,6 +81,7 @@
         - nodejs
 
     - name: nvim - install plugins
+      become: no
       command:
         cmd: nvim --headless +pluginstall +qall
         creates: "{{ home_dir }}/.local/share/nvim"
