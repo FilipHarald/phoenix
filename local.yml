@@ -88,9 +88,8 @@
 
     - name: dotfiles - clone repo
       ansible.builtin.git:
-        repo: git@github.com:FilipHarald/dotfiles.git
+        repo: https://github.com/FilipHarald/phoenix.git
         dest: "{{ home_dir }}/dotfiles"
-        accept_hostkey: true
       tags:
         - dotfiles
 
