@@ -1,0 +1,2 @@
+username: "{{ lookup('ansible.builtin.env', 'USER') }}"
+home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
