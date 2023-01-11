@@ -116,7 +116,7 @@
     - name: nvim - install plugins
       become: no
       command:
-        cmd: nvim --headless +pluginstall +qall
+        cmd: nvim --headless +'PlugInstall' +qall
         creates: "{{ home_dir }}/.local/share/nvim"
       tags:
         - nvim
