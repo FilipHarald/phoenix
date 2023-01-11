@@ -20,11 +20,6 @@
         - "{{ username }}"
 
   tasks:
-    - name: dotfiles - clone repo
-      ansible.builtin.git:
-        repo: git@github.com:FilipHarald/dotfiles.git
-        dest: "{{ home_dir }}/lol"
-
     - name: general - install packages
       become_user: root
       apt: name={{item}}
@@ -62,7 +57,6 @@
         - rust
 
     - name: nodejs - install nvm
-      become: no
       ansible.builtin.shell: >
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
       args:
@@ -73,9 +67,8 @@
         - nodejs
 
     - name: nodejs - install node
-      become: no
-      shell: >
-        . {{ home_dir }}/.nvm/nvm.sh && nvm install {{ item }} && nvm use {{ item }}
+      ansible.builtin.shell: >
+        {{ home_dir }}/.nvm/nvm.sh && nvm install {{ item }} && nvm use {{ item }}
       args:
         executable: /bin/bash
         chdir: "{{ home_dir }}"
@@ -98,3 +91,30 @@
         path: "{{ home_dir }}/.ssh/id_rsa"
       tags:
         - ssh
+
+    - name: dotfiles - clone repo
+      ansible.builtin.git:
+        repo: git@github.com:FilipHarald/dotfiles.git
+        dest: "{{ home_dir }}/dotfiles"
+      tags:
+        - dotfiles
+
+    - name: dotfiles - remove bashrc # this could be optimized
+      ansible.builtin.file:
+        path: "{{ home_dir }}/.bashrc"
+        state: absent
+      tags:
+        - dotfiles
+
+    - name: dotfiles - run stow
+      ansible.builtin.shell: >
+        stow {{ item }}
+      args:
+        executable: /bin/bash
+        chdir: "{{ home_dir }}/dotfiles"
+      loop:
+        - bash
+        - i3
+        - nvim
+      tags:
+        - dotfiles
