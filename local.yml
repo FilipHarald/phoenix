@@ -35,6 +35,8 @@
         - bat
         - curl
         - neovim
+        - tree
+        - fd-find
 
     # https://waylonwalker.com/install-rust/
     - name: rust - check if cargo is installed
