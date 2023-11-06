@@ -37,6 +37,13 @@
         - neovim
         - tree
         - fd-find
+        - syncthing
+
+    - name: general - install snaps
+      become_user: root
+      community.general.snap:
+        name: obsidian
+        classic: true
 
     # https://waylonwalker.com/install-rust/
     - name: rust - check if cargo is installed
@@ -108,3 +115,9 @@
       changed_when: stow_result.stdout != ""
       tags:
         - dotfiles
+
+    - name: syncthing - run on startup
+      ansible.builtin.systemd:
+        name: syncthing.service
+        enabled: true
+        scope: user
